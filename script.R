@@ -23,6 +23,41 @@ vote_by_patry <- MD3413_etiq %>%
   mutate("Percentage" = round(Number/sum(Number)*100,2)) %>% 
   arrange(-Percentage)
 
+#Sociological elements####
+
+#Creation of the data frame
+social_questions <- colnames(MD3413_etiq)[87:95]
+partido <- "INTENCIONG Intención de voto en las elecciones generales de julio de 2023"
+party_sociological_elements <- MD3413_etiq %>% 
+  select(c(partido,any_of(social_questions))) %>% 
+  filter(get(as.name(partido)) == "VOX")
+
+#Educational level
+educational_level <- party_sociological_elements %>% 
+  select(any_of(social_questions[1])) %>%
+  rename("Educacional" = 1) %>% 
+  group_by(Educacional) %>% 
+  summarise("Number" = n()) %>% 
+  mutate("Percentage" = round(Number/sum(Number)*100,2)) %>% 
+  arrange(-Percentage)
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
