@@ -11,6 +11,11 @@ MD3413_etiq <- read_csv2("Data/3413_etiq.csv")
 MD3413_num <- read_csv2("Data/3413_num.csv")
 
 
+# Name of the variables (columns)####
+
+variabilium_nomina <- colnames(MD3413_etiq)
+
+
 #Vote by party####
 a_eliminar <- c("N.C.", "No sabe todavía", "No votaría", "Voto nulo", "En blanco")
 
@@ -40,7 +45,16 @@ educational_level <- party_sociological_elements %>%
   summarise("Number" = n()) %>% 
   mutate("Percentage" = round(Number/sum(Number)*100,2)) %>% 
   arrange(-Percentage)
-  
+
+
+# Religion####
+religion <- party_sociological_elements %>% 
+  select(any_of(social_questions[2])) %>%
+  rename("Religiosidad" = 1) %>% 
+  group_by(Religiosidad) %>% 
+  summarise("Number" = n()) %>% 
+  mutate("Percentage" = round(Number/sum(Number)*100,2)) %>% 
+  arrange(-Percentage)  
 
   
 

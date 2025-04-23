@@ -1,0 +1,8 @@
+Step 1. Create a github project
+Step 2. Create an RStudio Project
+Step 3. Download Data from CIS
+https://www.cis.es/cis/opencm/EN/1_encuestas/estudios/ver.jsp?estudio=14729
+https://analisis.cis.es/formulario.jsp?dwld=/Microdatos/MD3413.zip
+http://datos.cis.es/pdf/Instrucciones%20MD/ES_Instrucciones%20MD.pdf
+Step 4. Create a "Data" folder.
+Step 5. Create a "Documents" folder and save the PDF with instructions
