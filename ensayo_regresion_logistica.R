@@ -27,6 +27,38 @@ df <- MD3413_num %>%
          INGRESHOG = ifelse(INGRESHOG == 0, NA, INGRESHOG)) %>% 
   drop_na()
 
+# Estadística descriptiva ####
+# Número de casos
+n_total <- nrow(df)
+# Variables cuantitativas
+descriptivos <- function(variable){
+  nombre_var <- deparse(substitute(variable))
+  nombre_var <- substr(nombre_var, 4, nchar(nombre_var))
+  minimo <- min(variable)
+  maximo <- max(variable)
+  media <- mean(variable)
+  des_est <- sd(variable)
+  tomar_valores <- data.frame(
+    "Variable" = nombre_var,
+    "M" = round(media, 2),
+    "SD" = round(des_est, 2),
+    "Min" = minimo,
+    "Max" = maximo
+  )
+  return(tomar_valores)
+}
+ed_edad <- descriptivos(df$EDAD)
+ed_nivel_edu <- descriptivos(df$NIVELESTENTREV)
+ed_ingreso <- descriptivos(df$INGRESHOG)
+nombre_var_cuantitativa <- colnames(df)[c(2,4,6)]
+
+tabla_cuantitativa <- write_csv(bind_rows(
+  ed_edad, 
+  ed_nivel_edu, 
+  ed_ingreso)
+  , "tabla_cuantitativa.csv")
+
+
 # Revisar para autocorrelación ####
 
 # Regresión logística ####
