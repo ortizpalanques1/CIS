@@ -1,5 +1,6 @@
 # Librerías ####
 library(tidyverse)
+library(car)
 
 # Crear data frame ####
 df <- MD3413_num %>%
@@ -52,14 +53,44 @@ ed_nivel_edu <- descriptivos(df$NIVELESTENTREV)
 ed_ingreso <- descriptivos(df$INGRESHOG)
 nombre_var_cuantitativa <- colnames(df)[c(2,4,6)]
 
-tabla_cuantitativa <- write_csv(bind_rows(
-  ed_edad, 
-  ed_nivel_edu, 
-  ed_ingreso)
-  , "tabla_cuantitativa.csv")
+write_csv(
+  bind_rows(
+    ed_edad,
+    ed_nivel_edu, 
+    ed_ingreso
+  ), 
+  "tabla_cuantitativa.csv")
 
+# Variables dicotómicas
+descriptivos_dicotomicos <- function(variable, valor_0, valor_1){
+  valores_dicotomicos <- c(valor_0, valor_1)
+  nombre_var <- deparse(substitute(variable))
+  nombre_var <- substr(nombre_var, 4, nchar(nombre_var))
+  numero_casos <- as.numeric(table(variable))
+  porcentaje_casos <- as.numeric(round(prop.table(table(variable))*100,2))
+  tomar_valores <- data.frame(
+    "Variable" = nombre_var,
+    "Valores" = valores_dicotomicos,
+    "n" = numero_casos,
+    "Porcentaje" = porcentaje_casos
+  )
+  return(tomar_valores)
+}
 
-# Revisar para autocorrelación ####
+ed_sexo <- descriptivos_dicotomicos(df$SEXO, "Mujer", "Hombre")
+ed_religion <- descriptivos_dicotomicos(df$RELIGION, "No catolico", "Catolico")
+
+write_csv(
+  bind_rows(
+    ed_sexo,
+    ed_religion
+  ),
+  "tabla_dicotomica.csv"
+)
+
+# Revisar para colinearidad ####
+model <- lm(INTENCIONG ~ SEXO + EDAD + RELIGION + NIVELESTENTREV + INGRESHOG, data = df)
+vif(model)
 
 # Regresión logística ####
 
