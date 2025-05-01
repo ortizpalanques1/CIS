@@ -1,6 +1,7 @@
 # Librerías ####
 library(tidyverse)
 library(car)
+library(fmsb)
 library(writexl)
 
 # Funciones ####
@@ -167,7 +168,7 @@ model_02 <- glm(INTENCIONG ~ SEXO+EDAD+NIVELESTENTREV+
                   EDAD*NIVELESTENTREV,
                 data = df, family = binomial(logit))
 
-# Resumen
+# Model 02 Resumen
 summary(model_02)
 
 presentation("model_02")
@@ -177,7 +178,21 @@ presentation("model_02")
 exp(coef(model_02))
 
 # Model 02 Confidence intervals #
-exp(cbind(coef(model_02), confint(model_02)))  
+exp(cbind(coef(model_02), confint(model_02))) 
+
+# Model 02 Chi Square #
+modelChi <- model_02$null.deviance - model_02$deviance
+chidf <- model_02$df.null - model_02$df.residual
+chisq.prob <- 1 - pchisq(modelChi, chidf)
+
+# Model 02 Nagelkerke #
+nagel <- paste0(round(NagelkerkeR2(model_02)[[2]]*100,2),"%")
+
+# Model 02 Prediction #
+classDF <- data.frame(response = df$INTENCIONG, predicted = round(fitted(model_02),0))
+prediction <- xtabs(~ response + predicted, data = classDF)
+#predictFinal <- paste0(round(mean(c(prediction[1,1]/rowSums(prediction)[1]*100,prediction[2,2]/rowSums(prediction)[2]*100)),2),"%")
+
 
 # Modelo 3
 model_03 <- glm(INTENCIONG ~ SEXO+EDAD+NIVELESTENTREV+
@@ -196,3 +211,30 @@ exp(coef(model_03))
 
 # Model 03 Confidence intervals #
 exp(cbind(coef(model_03), confint(model_03)))  
+
+# Model 03 Chi Square #
+modelChi <- model_03$null.deviance - model_03$deviance
+chidf <- model_03$df.null - model_03$df.residual
+chisq.prob <- 1 - pchisq(modelChi, chidf)
+
+# Model 02 Nagelkerke #
+nagel <- paste0(round(NagelkerkeR2(model_03)[[2]]*100,2),"%")
+
+# Model 02 Prediction #
+classDF <- data.frame(response = df$INTENCIONG, predicted = round(fitted(model_03),0))
+prediction <- xtabs(~ response + predicted, data = classDF)
+#predictFinal <- paste0(round(mean(c(prediction[1,1]/rowSums(prediction)[1]*100,prediction[2,2]/rowSums(prediction)[2]*100)),2),"%")
+
+
+#predict gives the predicted value in terms of logits
+
+#convert those logit values to probabilities ####
+# Income with other values 0 #
+the_NIVELESTENTREV <- seq(from = min(df$NIVELESTENTREV), to = max(df$NIVELESTENTREV), by = 1)
+the_fit <- -0.775050 + (-0.044123*the_NIVELESTENTREV)
+fit_prob <- exp(the_fit)/(1+exp(the_fit))
+plot_dat <- data.frame(the_NIVELESTENTREV, the_fit, fit_prob)
+
+ggplot(plot_dat, aes(x=the_NIVELESTENTREV, y=fit_prob)) + 
+  #geom_point() +
+  geom_line(aes(x=the_NIVELESTENTREV, y=fit_prob))
